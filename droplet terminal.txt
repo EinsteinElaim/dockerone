@@ -1,0 +1,171 @@
+Using username "root".
+Authenticating with public key "rsa-key-20200307"
+Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-66-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Sat Mar 14 19:01:25 UTC 2020
+
+  System load:  0.02               Processes:              109
+  Usage of /:   14.0% of 24.06GB   Users logged in:        0
+  Memory usage: 36%                IP address for eth0:    198.211.122.252
+  Swap usage:   0%                 IP address for docker0: 172.17.0.1
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+53 packages can be updated.
+0 updates are security updates.
+
+
+*** System restart required ***
+Last login: Sat Mar 14 18:38:58 2020 from 197.248.16.215
+root@einstein:~# ls
+data  docker1  latest1  new  task_api
+root@einstein:~# cd docker1/
+root@einstein:~/docker1# ls
+testingDocker1
+root@einstein:~/docker1# cd testingDocker1/
+root@einstein:~/docker1/testingDocker1# ls
+Dockerfile  app  requirements.txt
+root@einstein:~/docker1/testingDocker1# docker ps
+CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS              PORTS                                     NAMES
+4eefad88c66d        my_second_flask_app   "/entrypoint.sh /sta…"   3 minutes ago       Up 3 minutes        80/tcp, 443/tcp, 0.0.0.0:5000->5000/tcp   compassionate_neumann
+2c9ef75d274f        my_flask_app          "/entrypoint.sh /sta…"   58 minutes ago      Up 58 minutes       0.0.0.0:80->80/tcp, 443/tcp               elegant_noyce
+root@einstein:~/docker1/testingDocker1# docker ps
+CONTAINER ID        IMAGE                 COMMAND                  CREATED
+4eefad88c66d        my_second_flask_app   "/entrypoint.sh /sta…"   3 minutes ago
+2c9ef75d274f        my_flask_app          "/entrypoint.sh /sta…"   59 minutes ag
+root@einstein:~/docker1/testingDocker1# ^C
+root@einstein:~/docker1/testingDocker1# docker ps
+CONTAINER ID        IMAGE                 COMMAND                  CREATED
+4eefad88c66d        my_second_flask_app   "/entrypoint.sh /sta…"   4 minutes ago
+2c9ef75d274f        my_flask_app          "/entrypoint.sh /sta…"   59 minutes ag
+root@einstein:~/docker1/testingDocker1# ls
+Dockerfile  app  requirements.txt
+root@einstein:~/docker1/testingDocker1# docker build -t last_flask_app
+"docker build" requires exactly 1 argument.
+See 'docker build --help'.
+
+Usage:  docker build [OPTIONS] PATH | URL | -
+
+Build an image from a Dockerfile
+root@einstein:~/docker1/testingDocker1# docker build -t last_flask_app .
+Sending build context to Docker daemon  132.1kB
+Step 1/6 : FROM tiangolo/uwsgi-nginx-flask:python3.7
+ ---> fb645b1beeca
+Step 2/6 : COPY requirements.txt /tmp/
+ ---> Using cache
+ ---> 8cae26e04429
+Step 3/6 : RUN pip install -U pip
+ ---> Using cache
+ ---> 84bd936a5ea1
+Step 4/6 : RUN pip install -r /tmp/requirements.txt
+ ---> Using cache
+ ---> b93de3834441
+Step 5/6 : COPY ./app /app
+ ---> e1b6a540269f
+Step 6/6 : ENV MESSAGE "hello from Docker"
+ ---> Running in cba45a89c621
+Removing intermediate container cba45a89c621
+ ---> c147487ee8ee
+Successfully built c147487ee8ee
+Successfully tagged last_flask_app:latest
+root@einstein:~/docker1/testingDocker1# docker run -p 5000:5000 -t last_flask_app
+docker: Error response from daemon: driver failed programming external connectivity on endpoint amazing_hugle (bd37cbf5f1fdb3d2d440199586e0ad724f28d5275c684444b22ef85ec898024f): Bind for 0.0.0.0:5000 failed: port is already allocated.
+root@einstein:~/docker1/testingDocker1# docker run -p 5001:5000 -t last_flask_ap
+Checking for script in /app/prestart.sh
+Running script /app/prestart.sh
+Running inside /app/prestart.sh, you could add migrations to this file, e.g.:
+
+#! /usr/bin/env bash
+
+# Let the DB start
+sleep 10;
+# Run migrations
+alembic upgrade head
+
+/usr/lib/python2.7/dist-packages/supervisor/options.py:298: UserWarning: Supervipecify a "-c" argument specifying an absolute path to a configuration file for i
+  'Supervisord is running as root and it is searching '
+2020-03-14 19:09:50,131 CRIT Supervisor running as root (no user in config file)
+2020-03-14 19:09:50,132 INFO Included extra file "/etc/supervisor/conf.d/supervi
+2020-03-14 19:09:50,153 INFO RPC interface 'supervisor' initialized
+2020-03-14 19:09:50,155 CRIT Server 'unix_http_server' running without any HTTP
+2020-03-14 19:09:50,156 INFO supervisord started with pid 1
+2020-03-14 19:09:51,160 INFO spawned: 'nginx' with pid 9
+2020-03-14 19:09:51,164 INFO spawned: 'uwsgi' with pid 10
+[uWSGI] getting INI configuration from /app/uwsgi.ini
+[uWSGI] getting INI configuration from /etc/uwsgi/uwsgi.ini
+
+;uWSGI instance configuration
+[uwsgi]
+cheaper = 2
+processes = 16
+ini = /app/uwsgi.ini
+module = main
+callable = app
+ini = /etc/uwsgi/uwsgi.ini
+socket = /tmp/uwsgi.sock
+chown-socket = nginx:nginx
+chmod-socket = 664
+hook-master-start = unix_signal:15 gracefully_kill_them_all
+need-app = true
+die-on-term = true
+show-config = true
+;end of configuration
+
+*** Starting uWSGI 2.0.18 (64bit) on [Sat Mar 14 19:09:51 2020] ***
+compiled with version: 6.3.0 20170516 on 14 October 2019 23:20:32
+os: Linux-4.15.0-66-generic #75-Ubuntu SMP Tue Oct 1 05:24:09 UTC 2019
+nodename: 83bbce27640f
+machine: x86_64
+clock source: unix
+pcre jit disabled
+detected number of CPU cores: 1
+current working directory: /app
+detected binary path: /usr/local/bin/uwsgi
+your memory page size is 4096 bytes
+detected max file descriptor number: 1048576
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to UNIX address /tmp/uwsgi.sock fd 3
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) ***
+Python version: 3.7.4 (default, Sep 12 2019, 16:02:06)  [GCC 6.3.0 20170516]
+*** Python threads support is disabled. You can enable it with --enable-threads
+Python main interpreter initialized at 0x563e3881dfd0
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) ***
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 1239640 bytes (1210 KB) for 16 cores
+*** Operational MODE: preforking ***
+/usr/local/lib/python3.7/site-packages/flask_marshmallow/__init__.py:27: UserWar
+  "Flask-SQLAlchemy integration requires "
+2020-03-14 19:09:52,214 INFO success: nginx entered RUNNING state, process has s
+2020-03-14 19:09:52,215 INFO success: uwsgi entered RUNNING state, process has s
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x563e3881dfd0 pid:
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) ***
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 10)
+spawned uWSGI worker 1 (pid: 12, cores: 1)
+spawned uWSGI worker 2 (pid: 13, cores: 1)
+running "unix_signal:15 gracefully_kill_them_all" (master-start)...
+
+
+
+^C2020-03-14 19:11:38,687 WARN received SIGINT indicating exit request
+2020-03-14 19:11:38,698 INFO waiting for nginx, uwsgi to die
+Sat Mar 14 19:11:38 2020 - graceful shutdown triggered...
+Gracefully killing worker 1 (pid: 12)...
+Gracefully killing worker 2 (pid: 13)...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+2020-03-14 19:11:39,702 INFO stopped: uwsgi (exit status 0)
+2020-03-14 19:11:39,726 INFO stopped: nginx (exit status 0)
+root@einstein:~/docker1/testingDocker1#

@@ -1,0 +1,4 @@
+VM Software:
+DOCKER
+1.Independently runs (Environment independent)
+2.Configure a custom image
